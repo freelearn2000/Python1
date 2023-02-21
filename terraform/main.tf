@@ -112,3 +112,37 @@ resource "azurerm_virtual_machine" "vm" {
     environment = "dev"
   }
 }
+
+resource "azurerm_service_plan" "plan01" {
+  name                = var.app_sevice_plan_name
+  location            = azurerm_resource_group.rg01.location
+  resource_group_name = azurerm_resource_group.rg01.name
+  os_type             = "Linux"
+  sku_name            = "B1"
+}
+
+resource "azurerm_linux_web_app" "example" {
+  name                = var.app_service_name
+  location            = azurerm_resource_group.rg01.location
+  resource_group_name = azurerm_resource_group.rg01.name
+  service_plan_id     = azurerm_service_plan.plan01.id
+  https_only            = true
+  site_config { 
+    application_stack {
+      python_version = "3.9"
+    }
+}
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "example" {
+  app_service_id = azurerm_linux_web_app.example.id
+  subnet_id      = azurerm_subnet.subnet1.id
+}
+
+resource "azurerm_app_service_source_control" "sourcecontrol" {
+  app_id             = azurerm_linux_web_app.example.id
+  repo_url           = "https://github.com/freelearn2000/Python1.git"
+  branch             = "main"
+  use_manual_integration = true
+  use_mercurial      = false
+}
