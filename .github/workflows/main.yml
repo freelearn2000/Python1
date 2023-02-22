@@ -21,6 +21,12 @@ jobs:
    
     - name: Checkout
       uses: actions/checkout@main
+    
+    - name: 'Terraform setup'
+    # Description: Downloading a specific version of terraform CLI
+      uses: hashicorp/setup-terraform@v2
+      with:
+       terraform_version: 1.1.7
    
     - name: 'Terraform Init' 
     # Description : Initialises a working directory containing Terraform configuration files.
