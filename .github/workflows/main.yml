@@ -52,7 +52,7 @@ jobs:
         tf_actions_working_dir: "./terraform"
  
     - name: Terraform Apply
-    # Description : Buids or change infrastructure
+    # Description : Builds or change infrastructure
       if: github.ref == 'refs/heads/main'
       uses: hashicorp/terraform-github-actions@master
       with:
