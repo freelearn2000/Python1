@@ -136,7 +136,7 @@ resource "azurerm_linux_web_app" "example" {
 
 resource "azurerm_app_service_virtual_network_swift_connection" "example" {
   app_service_id = azurerm_linux_web_app.example.id
-  subnet_id      = azurerm_subnet.subnet1.id
+  subnet_id      = azurerm_subnet.subnet.id
 }
 
 resource "azurerm_app_service_source_control" "sourcecontrol" {
