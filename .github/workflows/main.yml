@@ -22,7 +22,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
    
-    - name: 'Terraform Init'
+    - name: 'Terraform Init' 
+    # Description : Initialises a working directory containing Terraform configuration files.
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: 0.14.8
@@ -30,6 +31,7 @@ jobs:
         tf_actions_working_dir: "./terraform"
  
     - name: 'Terraform Validate'
+    # Description : Validates the configuration files in a directory.
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: 0.14.8
@@ -42,6 +44,7 @@ jobs:
         creds: '${{ env.ARM_SUBSCRIPTION_ID }}'
  
     - name: 'Terraform Plan'
+    # Description : Creates an execution plan, which lets to preview the changes that Terraform plans to make to your infrastructure
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: 0.14.8
@@ -49,6 +52,7 @@ jobs:
         tf_actions_working_dir: "./terraform"
  
     - name: Terraform Apply
+    # Description : Buids or change infrastructure
       if: github.ref == 'refs/heads/main'
       uses: hashicorp/terraform-github-actions@master
       with:
