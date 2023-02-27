@@ -4,7 +4,7 @@ on:
   workflow_dispatch
  
 jobs:
-  terraform:
+  terraform-staging:
     name: 'Terraform'
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
@@ -12,6 +12,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: '${{ secrets.ARM_SUBSCRIPTION_ID }}'
       ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
     runs-on: ubuntu-latest
+    environment: staging
    
     defaults:
       run:
@@ -34,7 +35,7 @@ jobs:
       with:
         tf_actions_version: 0.14.8
         tf_actions_subcommand: 'init'
-        tf_actions_working_dir: "./terraform"
+        tf_actions_working_dir: "./terraform/staging"
  
     - name: 'Terraform Validate'
     # Description : Validates the configuration files in a directory.
@@ -42,12 +43,7 @@ jobs:
       with:
         tf_actions_version: 0.14.8
         tf_actions_subcommand: 'validate'
-        tf_actions_working_dir: "./terraform" 
-           
-#     - name: azure login
-#       uses: azure/login@v1
-#       env:
-#         creds: '${{ env.ARM_SUBSCRIPTION_ID }}'
+        tf_actions_working_dir: "./terraform/staging"           
  
     - name: 'Terraform Plan'
     # Description : Creates an execution plan, which lets to preview the changes that Terraform plans to make to your infrastructure
@@ -55,7 +51,7 @@ jobs:
       with:
         tf_actions_version: 0.14.8
         tf_actions_subcommand: 'plan'
-        tf_actions_working_dir: "./terraform"
+        tf_actions_working_dir: "./terraform/staging"
  
     - name: Terraform Apply
     # Description : Builds or change infrastructure
@@ -64,5 +60,62 @@ jobs:
       with:
         tf_actions_version: 0.14.8
         tf_actions_subcommand: 'apply'
-        tf_actions_working_dir: "./terraform"
+        tf_actions_working_dir: "./terraform/staging"
        
+  terraform-production:
+     name: 'Terraform-Prod'
+     env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID-PROD }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET-PROD }}
+      ARM_SUBSCRIPTION_ID: '${{ secrets.ARM_SUBSCRIPTION_ID-PROD }}'
+      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID-PROD }}
+     runs-on: ubuntu-latest
+     environment: production
+   
+     defaults:
+      run:
+        shell: bash
+ 
+     steps:
+   
+     - name: Checkout
+       uses: actions/checkout@main
+    
+     - name: 'Terraform setup'
+    # Description: Downloading a specific version of terraform CLI
+       uses: hashicorp/setup-terraform@v2
+       with:
+        terraform_version: 1.1.7
+   
+     - name: 'Terraform Init' 
+    # Description : Initialises a working directory containing Terraform configuration files.
+       uses: hashicorp/terraform-github-actions@master
+       with:
+        tf_actions_version: 0.14.8
+        tf_actions_subcommand: 'init'
+        tf_actions_working_dir: "./terraform/production"
+ 
+     - name: 'Terraform Validate'
+    # Description : Validates the configuration files in a directory.
+       uses: hashicorp/terraform-github-actions@master
+       with:
+        tf_actions_version: 0.14.8
+        tf_actions_subcommand: 'validate'
+        tf_actions_working_dir: "./terraform/production"           
+ 
+     - name: 'Terraform Plan'
+    # Description : Creates an execution plan, which lets to preview the changes that Terraform plans to make to your infrastructure
+       uses: hashicorp/terraform-github-actions@master
+       with:
+        tf_actions_version: 0.14.8
+        tf_actions_subcommand: 'plan'
+        tf_actions_working_dir: "./terraform/production"
+ 
+     - name: Terraform Apply
+    # Description : Builds or change infrastructure
+       if: github.ref == 'refs/heads/main'
+       uses: hashicorp/terraform-github-actions@master
+       with:
+        tf_actions_version: 0.14.8
+        tf_actions_subcommand: 'apply'
+        tf_actions_working_dir: "./terraform/production"
