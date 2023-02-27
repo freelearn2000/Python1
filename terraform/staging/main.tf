@@ -12,26 +12,26 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "my-resource-group"
+  name     = "my-resource-group-staging"
   location = "eastus"
 }
 
 resource "azurerm_virtual_network" "vnet" {
-  name                = "my-vnet"
+  name                = "my-vnet-staging"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "my-subnet"
+  name                 = "my-subnet-staging"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_security_group" "nsg" {
-  name                = "my-nsg"
+  name                = "my-nsg-staging"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -61,12 +61,12 @@ resource "azurerm_network_security_group" "nsg" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "my-nic"
+  name                = "my-nic-staging"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
-    name                          = "my-nic-ip"
+    name                          = "my-nic-ip-staging"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = null
@@ -78,7 +78,7 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "my-vm"
+  name                  = "my-vm-staging"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
@@ -114,7 +114,7 @@ resource "azurerm_virtual_machine" "vm" {
 }
 
 resource "azurerm_service_plan" "plan01" {
-  name                = "example-appserviceplan"
+  name                = "example-appserviceplan-staging"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
@@ -122,7 +122,7 @@ resource "azurerm_service_plan" "plan01" {
 }
 
 resource "azurerm_linux_web_app" "example" {
-  name                = "example-app-service"
+  name                = "example-app-service-staging"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   service_plan_id     = azurerm_service_plan.plan01.id
