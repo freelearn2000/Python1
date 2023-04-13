@@ -1,148 +1,134 @@
-terraform {
-
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=3.0.0"
-    }
-  }
-}
+# Configure the Azure provider
 provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = "my-resource-group-staging"
+# Create a resource group
+resource "azurerm_resource_group" "example" {
+  name     = "example-resource-group"
   location = "eastus"
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                = "my-vnet-staging"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+# Create a virtual network
+resource "azurerm_virtual_network" "example" {
+  name                = "example-vnet"
   address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 }
 
-resource "azurerm_subnet" "subnet" {
-  name                 = "my-subnet-staging"
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+# Create subnets
+resource "azurerm_subnet" "app" {
+  name                 = "app-subnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_network_security_group" "nsg" {
-  name                = "my-nsg-staging"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  security_rule {
-    name                       = "http"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "ssh"
-    priority                   = 200
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+resource "azurerm_subnet" "database" {
+  name                 = "database-subnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefixes     = ["10.0.2.0/24"]
 }
 
-resource "azurerm_network_interface" "nic" {
-  name                = "my-nic-staging"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  ip_configuration {
-    name                          = "my-nic-ip-staging"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = null
-  }
-
-  tags = {
-    environment = "dev"
-  }
+# Create a public IP address for the VM running the Node.js app
+resource "azurerm_public_ip" "app" {
+  name                = "app-public-ip"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  allocation_method   = "Dynamic"
 }
 
-resource "azurerm_virtual_machine" "vm" {
-  name                  = "my-vm-staging"
-  location              = azurerm_resource_group.rg.location
-  resource_group_name   = azurerm_resource_group.rg.name
-  network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1s"
+# Create a network security group for the Node.js app subnet
+resource "azurerm_network_security_group" "app" {
+  name                = "app-nsg"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+}
 
-  storage_image_reference {
+# Create a rule to allow HTTP traffic to the Node.js app
+resource "azurerm_network_security_rule" "http" {
+  name                        = "http-rule"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "80"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.example.name
+  network_security_group_name = azurerm_network_security_group.app.name
+}
+
+# Create a virtual machine running the Node.js app
+resource "azurerm_linux_virtual_machine" "app" {
+  name                  = "app-vm"
+  location              = azurerm_resource_group.example.location
+  resource_group_name   = azurerm_resource_group.example.name
+  size                  = "Standard_B1s"
+  admin_username        = "adminuser"
+  network_interface_ids = [azurerm_network_interface.app.id]
+  os_disk {
+    name              = "app-os-disk"
+    caching           = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+  source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = "18.04-LTS"
     version   = "latest"
   }
-
-  storage_os_disk {
-    name              = "my-vm-osdisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
-  }
-
-  os_profile {
-    computer_name  = "my-vm"
-    admin_username = "adminuser"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  tags = {
-    environment = "dev"
-  }
+  custom_data = base64encode(file("init.sh"))
 }
 
-resource "azurerm_service_plan" "plan01" {
-  name                = "example-appserviceplan-staging"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-  sku_name            = "B1"
-}
+resource "azurerm_network_interface" "app" {
+ name = "app-nic"
+ location = azurerm_resource_group.example.location
+ resource_group_name = azurerm_resource_group.example.name
 
-resource "azurerm_linux_web_app" "example" {
-  name                = "example-app-service-staging"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  service_plan_id     = azurerm_service_plan.plan01.id
-  https_only            = true
-  site_config { 
-    application_stack {
-      python_version = "3.9"
-    }
+ip_configuration {
+ name = "app-ip-config"
+ subnet_id = azurerm_subnet.app.id
+ private_ip_address_allocation = "Dynamic"
+ public_ip_address_id = azurerm_public_ip.app.id
 }
 }
 
-resource "azurerm_app_service_virtual_network_swift_connection" "example" {
-  app_service_id = azurerm_linux_web_app.example.id
-  subnet_id      = azurerm_subnet.subnet.id
+#Create a managed PostgreSQL database server
+resource "azurerm_postgresql_server" "database" {
+ name = "example-database"
+ location = azurerm_resource_group.example.location
+ resource_group_name = azurerm_resource_group.example.name
+ sku_name = "GP_Gen5_2"
+ storage_mb = 5120
+ administrator_login = "exampleadmin"
+ administrator_password = "SuperSecretPassword123!"
+ version = "11"
+ ssl_enforcement_enabled = true
+ backup_retention_days = 7
+ geo_redundant_backup_enabled = false
+
+ auto_grow_enabled = true
+
+ network_configuration {
+ subnet_id = azurerm_subnet.database.id
+ public_network_access_enabled = false
+}
 }
 
-resource "azurerm_app_service_source_control" "sourcecontrol" {
-  app_id             = azurerm_linux_web_app.example.id
-  repo_url           = "https://github.com/freelearn2000/Python1.git"
-  branch             = "main"
-  use_manual_integration = true
-  use_mercurial      = false
+#Create a firewall rule to allow the Node.js app to access the database
+resource "azurerm_postgresql_firewall_rule" "database" {
+ name = "app-database-rule"
+ resource_group_name = azurerm_resource_group.example.name
+ server_name = azurerm_postgresql_server.database.name
+ start_ip_address = azurerm_subnet.app.address_prefixes[0]
+ end_ip_address = azurerm_subnet.app.address_prefixes[0]
+}
+
+#Output the public IP address of the Node.js app VM
+ output "app_public_ip" {
+ value = azurerm_public_ip.app.ip_address
 }
