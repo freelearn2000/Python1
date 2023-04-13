@@ -11,6 +11,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: '${{ secrets.ARM_SUBSCRIPTION_ID }}'
       ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      NODE_VERSION: '14.x'     
     runs-on: ubuntu-latest
     environment: staging
    
@@ -20,8 +21,19 @@ jobs:
  
     steps:
    
-    - name: Checkout
-      uses: actions/checkout@main
+    - name: Checkout master from repository
+      uses: actions/checkout@master
+    
+    - name: Setup Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Run npm install, compile
+      run: |
+        # Build and comiple the project
+        npm install
+        npm run compile
     
     - name: 'Terraform setup'
     # Description: Downloading a specific version of terraform CLI
