@@ -2,10 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+const config = require('config');
+
+const api_Key = config.get('chatgpt.api_key');
+const model_ = config.get('chatgpt.model')
+
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: api_Key,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -21,14 +26,14 @@ app.post("/chat", async (req, res) => {
 
   // Generate a response with ChatGPT
   const completion = await openai.createCompletion({
-    model: "text-davinci-002",
+    model: model_,
     prompt: prompt,
   });
   res.send(completion.data.choices[0].text);
 });
 
 // Start the server
-const port = 8080;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });

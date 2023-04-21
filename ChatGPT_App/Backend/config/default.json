@@ -1,0 +1,6 @@
+{
+    "chatgpt" :{
+        "api_key" : "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",
+        "model" : "text-davinci-002"
+    }
+}
