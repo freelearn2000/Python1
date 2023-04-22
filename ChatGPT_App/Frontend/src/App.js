@@ -1,6 +1,10 @@
 import axios from "axios";
 import {useState} from 'react'
 import React from "react";
+import AppLogo from './app_logo.png'
+import CGLogo from './chat1_logo.png'
+import './App.css'
+
 
 const App = () => {
 
@@ -18,6 +22,7 @@ const App = () => {
     .then((res) => {
       // Update the response state with the server's response
       setResponse(res.data)
+      setPrompt('')
     })
     .catch((err) => {
       console.error(err)
@@ -27,13 +32,15 @@ const App = () => {
  
   return(
     <>
-     <div>
-      <h1>ChatGPT</h1>
+     <h6>ChatGPT</h6> 
+      <div className="wrapper">
+      <img src={AppLogo} alt="" className="app-logo"/>
       <form className="ui form" onSubmit={handleSubmit}>
+        <img src={CGLogo} alt="" className="cg-logo"/>
         <input type='text' placeholder="Send a message..." value={prompt} onChange={(e) => setPrompt(e.target.value)} />
         <button className="ui button" type="submit">Send</button>
-        <p>{response}</p>
       </form>
+      <p className="response-area">{response}</p>
     </div>
     </>
    
