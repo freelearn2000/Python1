@@ -38,6 +38,9 @@ jobs:
     - name: Run Unit Tests
       run: npm test
       
+    - name: Run Test Coverage
+      run: npm run test:coverage
+      
     
     - name: 'Terraform setup'
     # Description: Downloading a specific version of terraform CLI
