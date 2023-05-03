@@ -34,6 +34,10 @@ jobs:
         # Build and comiple the project
         npm install
         npm run compile
+
+    - name: Run Unit Tests
+      run: npm test
+      
     
     - name: 'Terraform setup'
     # Description: Downloading a specific version of terraform CLI
