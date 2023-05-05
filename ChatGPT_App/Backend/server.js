@@ -35,3 +35,20 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
+// fetch("https://api.openai.com/v1/completions", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//     "Authorization": `Bearer ${apiKey}`
+//   },
+//   body: JSON.stringify({
+//     prompt,
+//     temperature,
+//     max_tokens: maxTokens
+//   })
+// })
+// .then(response => response.json())
+// .then(data => {
+//   console.log(data.choices[0].text);
+// })
+// .catch(error => console.error(error));
