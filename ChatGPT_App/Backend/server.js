@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const axios = require("axios");
 require("dotenv").config( );
 
 
@@ -35,20 +36,33 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-// fetch("https://api.openai.com/v1/completions", {
-//   method: "POST",
-//   headers: {
-//     "Content-Type": "application/json",
-//     "Authorization": `Bearer ${apiKey}`
-//   },
-//   body: JSON.stringify({
-//     prompt,
-//     temperature,
-//     max_tokens: maxTokens
+// app.post("/chat", async (req, res) => {
+  
+//   const apiKey = process.env.api_key;
+//   const { prompt } = req.body;
+
+//   const client = axios.create({
+//     headers: {
+//       Authorization: "Bearer " + apiKey,
+//     },
+//   });
+
+//   const params = {
+//     prompt: prompt,
+//     model: "text-davinci-003"
+//   };
+
+//   client
+//     .post("https://api.openai.com/v1/completions", params)
+//     .then((result) => {
+//       res.send(result.data.choices[0].text);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
 //   })
-// })
-// .then(response => response.json())
-// .then(data => {
-//   console.log(data.choices[0].text);
-// })
-// .catch(error => console.error(error));
+
+// const port = process.env.PORT || 8080;
+// app.listen(port, () => {
+//   console.log(`Server listening on port ${port}`);
+// });
