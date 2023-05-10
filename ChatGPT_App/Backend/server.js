@@ -30,39 +30,39 @@ app.post("/chat", async (req, res) => {
   res.send(completion.data.choices[0].text);
 });
 
+// Using axios
+app.post("/chat1", async (req, res) => {
+  
+  const apiKey = process.env.api_key;
+  const { prompt } = req.body;
+
+  const client = axios.create({
+    headers: {
+      Authorization: "Bearer " + apiKey,
+    },
+  });
+
+  const params = {
+    prompt: prompt,
+    model: "text-davinci-003"
+  };
+
+  client
+    .post("https://api.openai.com/v1/completions", params)
+    .then((result) => {
+      res.send(result.data.choices[0].text);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  })
+
+app.post("/", async (req, res) => {  
+  res.status(200).send();
+})  
+
 // Start the server
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-
-// app.post("/chat", async (req, res) => {
-  
-//   const apiKey = process.env.api_key;
-//   const { prompt } = req.body;
-
-//   const client = axios.create({
-//     headers: {
-//       Authorization: "Bearer " + apiKey,
-//     },
-//   });
-
-//   const params = {
-//     prompt: prompt,
-//     model: "text-davinci-003"
-//   };
-
-//   client
-//     .post("https://api.openai.com/v1/completions", params)
-//     .then((result) => {
-//       res.send(result.data.choices[0].text);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-//   })
-
-// const port = process.env.PORT || 8080;
-// app.listen(port, () => {
-//   console.log(`Server listening on port ${port}`);
-// });
