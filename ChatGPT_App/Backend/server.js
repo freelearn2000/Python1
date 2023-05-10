@@ -1,14 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const config = require('config');
 const axios = require("axios");
 require("dotenv").config( );
 
-
+const api_Key = config.get('chatgpt.api_key');
+const model = config.get('chatgpt.model');
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: process.env.api_key,
+  apiKey: api_Key,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -20,11 +22,12 @@ app.use(cors())
 // Set up the ChatGPT endpoint
 app.post("/chat", async (req, res) => {
   // Get the prompt from the request
+  
   const { prompt } = req.body;
-
+  
   // Generate a response with ChatGPT
   const completion = await openai.createCompletion({
-    model: process.env.model,
+    model: model,
     prompt: prompt,
   });
   res.send(completion.data.choices[0].text);
@@ -33,7 +36,7 @@ app.post("/chat", async (req, res) => {
 // Using axios
 app.post("/chat1", async (req, res) => {
   
-  const apiKey = process.env.api_key;
+  const apiKey = api_Key;
   const { prompt } = req.body;
 
   const client = axios.create({
@@ -44,7 +47,7 @@ app.post("/chat1", async (req, res) => {
 
   const params = {
     prompt: prompt,
-    model: "text-davinci-003"
+    model: model
   };
 
   client
