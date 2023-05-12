@@ -36,7 +36,7 @@ app.post("/chat", async (req, res) => {
 // Using axios
 app.post("/chat1", async (req, res) => {
   
-  const apiKey = api_Key;
+  const apiKey = config.get('chatgpt.api_key');
   const { prompt } = req.body;
 
   const client = axios.create({
@@ -47,7 +47,7 @@ app.post("/chat1", async (req, res) => {
 
   const params = {
     prompt: prompt,
-    model: model
+    model:config.get('chatgpt.model')
   };
 
   client
