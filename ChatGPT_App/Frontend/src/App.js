@@ -18,7 +18,7 @@ const App = () => {
   
     // Send a request to the server with the prompt
     axios
-    .post("http://localhost:8080/chat1", {prompt})
+    .post("http://localhost:8080/chat", {prompt})
     .then((res) => {
       // Update the response state with the server's response
       setResponse(res.data)
