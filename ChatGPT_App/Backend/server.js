@@ -67,9 +67,6 @@ app.post("/chat1", async (req, res) => {
   HandlePost(prompt, res, dbClient);
 })
 
-app.get("/", async (req, res) => {
-  res.status(200).send();
-})
 
 app.get("/log", async (req, res) => {
 
@@ -104,6 +101,10 @@ async function HandlePost(prompt, res, dbClient) {
     await dbClient.close();
   }
 }
+
+app.get("/", async (req, res) => {
+  res.status(200).send();
+})
 
 // Start the server
 const port = process.env.PORT || 8080;

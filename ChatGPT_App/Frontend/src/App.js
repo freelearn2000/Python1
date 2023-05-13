@@ -52,7 +52,7 @@ const App = () => {
       <div  >
           <h1>Enter your Query</h1> 
           <div className="ui icon input">    
-              <input type="text" placeholder="Send a message..." value={prompt} onChange={(e) => setPrompt(e.target.value)} />
+              <input type="text" placeholder="Send a message..." style={{borderRadius: '100px'}} value={prompt} onChange={(e) => setPrompt(e.target.value)} />
             <i className="paper plane link icon" onClick={handleSubmit}></i>
           </div>  
       </div>
