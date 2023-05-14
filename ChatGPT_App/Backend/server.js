@@ -2,18 +2,22 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const config = require('config');
-const axios = require("axios");
 require("dotenv").config();
-
+const axios = require("axios");
+const { Configuration, OpenAIApi } = require("openai");
 const { MongoClient } = require('mongodb');
-const dbConStr = 'mongodb://127.0.0.1:27017';
+
+
+const dbConStr = process.env.MONGODB_CONNECTION;
 const dbClient = new MongoClient(dbConStr);
 
-const api_Key = config.get('chatgpt.api_key');
-const model = config.get('chatgpt.model');
-const { Configuration, OpenAIApi } = require("openai");
+const openai_api_Key = config.get('OPENAI_api_key');
+const openai_model = config.get('OPENAI_model');
+const openai_max_tokens = config.get('OPENAI_max_tokens');
+const openai_temperature = config.get('OPENAI_temperature');
+
 const configuration = new Configuration({
-  apiKey: api_Key,
+  apiKey: openai_api_Key,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -23,36 +27,49 @@ app.use(bodyParser.json());
 app.use(cors())
 
 
+app.get("/", async (req, res) => {
+  res.status(200).send("SUCCESS");
+})
+
 // Set up the ChatGPT endpoint
 app.post("/chat", async (req, res) => {
-  // Get the prompt from the request
 
+  // Get the prompt from the request
   const { prompt } = req.body;
 
-  // Generate a response with ChatGPT
-  const completion = await openai.createCompletion({
-    model: model,
-    prompt: prompt,
-  });
-  res.send(completion.data.choices[0].text);
-  HandlePost(prompt, res, dbClient);
+  try {
+    // Generate a response with ChatGPT
+    const completion = await openai.createCompletion({
+      model: openai_model,
+      prompt: prompt,
+      max_tokens: openai_max_tokens,
+      temperature: openai_temperature,
+      
+    });
+    res.send(completion.data.choices[0].text);
+  }
+  catch (e) {
+    console.log(e);
+  }
+  LogToDatabase(prompt, res, dbClient);
 });
 
 // Using axios
 app.post("/chat1", async (req, res) => {
 
-  const apiKey = config.get('chatgpt.api_key');
   const { prompt } = req.body;
 
   const client = axios.create({
     headers: {
-      Authorization: "Bearer " + apiKey,
+      Authorization: "Bearer " + openai_api_Key,
     },
   });
 
   const params = {
     prompt: prompt,
-    model: config.get('chatgpt.model')
+    model: openai_model,
+    max_tokens: openai_max_tokens,
+    temperature: openai_temperature,
   };
 
   client
@@ -64,11 +81,11 @@ app.post("/chat1", async (req, res) => {
       console.log(err);
     });
 
-  HandlePost(prompt, res, dbClient);
+  LogToDatabase(prompt, res, dbClient);
 })
 
 
-app.get("/log", async (req, res) => {
+app.get("/logs", async (req, res) => {
 
   try {
     await dbClient.connect();
@@ -86,7 +103,7 @@ app.get("/log", async (req, res) => {
   }
 })
 
-async function HandlePost(prompt, res, dbClient) {
+async function LogToDatabase(prompt, res, dbClient) {
 
   try {
     await dbClient.connect();
@@ -102,12 +119,9 @@ async function HandlePost(prompt, res, dbClient) {
   }
 }
 
-app.get("/", async (req, res) => {
-  res.status(200).send();
-})
 
 // Start the server
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.log(`Server listening on http://localhost:${port}`);
 });
