@@ -22,7 +22,7 @@ const App = () => {
     .then((res) => {
       // Update the response state with the server's response
       setResponse(res.data)
-      setPrompt('')
+      // setPrompt('')
     })
     .catch((err) => {
       console.error(err)
@@ -45,7 +45,7 @@ const App = () => {
   //   </>
    
   // )
-
+  
 
   return (
     <>   
@@ -56,7 +56,7 @@ const App = () => {
             <i className="paper plane link icon" onClick={handleSubmit}></i>
           </div>  
       </div>
-      <p>{response}</p>
+      <p style={{alignItems: 'center'}}>{response}</p>
     </>    
   );
 }

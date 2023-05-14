@@ -8,7 +8,7 @@ const { Configuration, OpenAIApi } = require("openai");
 const { MongoClient } = require('mongodb');
 
 
-const dbConStr = process.env.MONGODB_CONNECTION;
+const dbConStr = process.env.MONGODB_CONNECTION || 'mongodb://127.0.0.1:27017';
 const dbClient = new MongoClient(dbConStr);
 
 const openai_api_Key = config.get('OPENAI_api_key');
