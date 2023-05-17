@@ -1,5 +1,5 @@
 {
-    "OPENAI_api_key" : "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",
+    "OPENAI_api_key" : "sk-SkdvOik189XwmNnUIiV5T3BlbkFJ1TSE9rzNTP3tJkBnnnn",
     "OPENAI_model" : "text-davinci-003",
     "OPENAI_max_tokens":1024,
     "OPENAI_temperature":0.2 
