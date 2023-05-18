@@ -6,14 +6,40 @@ const psname = config.get('PERSISTENCE.dbname');
 const pstable = config.get('PERSISTENCE.collection');
 
 // Connect to Persistence Layer
-const connection_string = process.env.PERSISTENCE_CONNECTION|| 'mongodb://127.0.0.1:27017';
+const connection_string = process.env.PERSISTENCE_CONNECTION || 'mongodb://127.0.0.1:27017';
 const psClient = new MongoClient(connection_string);
 
-
 class Logger {
+  constructor( Log ) {
+    this.logType = config.get('Logger_Type');
+  }
+
+  getLogger( ) {
+    if( this.logType == 'Database' ) {
+      return new Dblog( psClient );
+    } else if( this.logType == 'File' ) {
+      return new FileLog();
+    
+    }
+  }
+
+}
+
+class Log {
+  log() {
+    
+  }
+}
+
+class FileLog extends Log {
+
+}
+
+class Dblog extends Log {
 
     constructor ( persistenceClient ) {
-        this.persClient = persistenceClient;
+      super();
+      this.persClient = persistenceClient;
     }
 
     // logging requests to the persistence layer
@@ -35,7 +61,7 @@ class Logger {
       
 }
 
-const loggerClient = new Logger (psClient);
+// const loggerClient = new Logger (psClient);
 
 
 async function LogAnalytics() {
@@ -59,7 +85,7 @@ async function LogAnalytics() {
 
 
 module.exports = {
-    LogAnalytics,loggerClient,
+    LogAnalytics, Logger
  };
 
 

@@ -5,7 +5,9 @@ const config = require('config');
 require("dotenv").config();
 const axios = require("axios");
 const { Configuration, OpenAIApi } = require("openai");
-const {LogAnalytics,loggerClient} = require("./mongodb");
+const { LogAnalytics, Logger} = require("./mongodb");
+
+let loggerClient = new Logger().getLogger();
 
 // Retreive all Config data
 const openai_api_Key = config.get('OPENAI.api_key');
