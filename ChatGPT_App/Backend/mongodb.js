@@ -1,4 +1,9 @@
+const config = require('config');
 const { MongoClient } = require('mongodb');
+
+
+const psname = config.get('PERSISTENCE.dbname');
+const pstable = config.get('PERSISTENCE.collection');
 
 // Connect to Persistence Layer
 const connection_string = process.env.PERSISTENCE_CONNECTION|| 'mongodb://127.0.0.1:27017';
@@ -17,7 +22,7 @@ class Logger {
         try {
             await psClient.connect();
             
-            await psClient.db("Project1").collection('ChatGPT').insertOne({ Question: prompt, Time: new Date().toString() });
+            await psClient.db(psname).collection(pstable).insertOne({ Question: prompt, Time: new Date().toString() });
             }
         catch (e) {
             console.log(e);
@@ -38,7 +43,7 @@ async function LogAnalytics() {
     try {
         await psClient.connect();
         
-        let result = await psClient.db("Project1").collection('ChatGPT').find().toArray();
+        let result = await psClient.db(psname).collection(pstable).find().toArray();
         return result;
     
       }

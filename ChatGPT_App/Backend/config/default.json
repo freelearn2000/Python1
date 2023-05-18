@@ -1,6 +1,13 @@
+
 {
-    "OPENAI_api_key" : "sk-SkdvOik189XwmNnUIiV5T3BlbkFJ1TSE9rzNTP3tJkBnnnn",
-    "OPENAI_model" : "text-davinci-003",
-    "OPENAI_max_tokens":1024,
-    "OPENAI_temperature":0.2 
+    "OPENAI" : {
+        "api_key" : "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",
+        "model" : "text-davinci-003",
+        "max_tokens" : 1024,
+        "temperature" : 0.2 
+    },
+    "PERSISTENCE" : {
+        "dbname" : "Project1",
+        "collection" : "ChatGPT"
+    }
 }

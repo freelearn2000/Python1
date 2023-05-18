@@ -8,10 +8,10 @@ const { Configuration, OpenAIApi } = require("openai");
 const {LogAnalytics,loggerClient} = require("./mongodb");
 
 // Retreive all Config data
-const openai_api_Key = config.get('OPENAI_api_key');
-const openai_model = config.get('OPENAI_model');
-const openai_max_tokens = config.get('OPENAI_max_tokens');
-const openai_temperature = config.get('OPENAI_temperature');
+const openai_api_Key = config.get('OPENAI.api_key');
+const openai_model = config.get('OPENAI.model');
+const openai_max_tokens = config.get('OPENAI.max_tokens');
+const openai_temperature = config.get('OPENAI.temperature');
 
 // Creating OpenAIApi Object
 const configuration = new Configuration({
