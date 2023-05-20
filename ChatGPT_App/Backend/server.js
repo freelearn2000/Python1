@@ -7,8 +7,9 @@ const axios = require("axios");
 const { Configuration, OpenAIApi } = require("openai");
 const { LogAnalytics, Logger} = require("./mongodb");
 
-let loggerClient = new Logger().getLogger();
 
+
+let loggerClient = new Logger().getLogger();
 // Retreive all Config data
 const openai_api_Key = config.get('OPENAI.api_key');
 const openai_model = config.get('OPENAI.model');
@@ -29,9 +30,8 @@ app.use(bodyParser.json());
 app.use(cors())
 
 
-// Set up the ChatGPT endpoint
-
-/* 
+// Application endpoints
+/* /chat
 Body
   {
     "prompt": "< enter prompt value >"
@@ -73,7 +73,12 @@ app.post("/chat", async (req, res) => {
   
 });
 
-// Using axios
+/* /chat1
+Body
+  {
+    "prompt": "< enter prompt value >"
+  }
+*/
 app.post("/chat1", async (req, res) => {
 
   const { prompt } = req.body;
@@ -114,7 +119,9 @@ app.post("/chat1", async (req, res) => {
     loggerClient.log(prompt);
 })
 
-
+/* /logs
+  Gets all logs to /chat & /chat1 api
+*/
 app.get("/logs", async (req, res) => {
 
   let info = await LogAnalytics();
@@ -122,14 +129,19 @@ app.get("/logs", async (req, res) => {
 
 })
 
+/* /
+  Checks whether app is running
+*/
 app.get("/", async (req, res) => {
   res.status(200).send("SUCCESS");
 })
 
 
 
-// Start the server
+// Retreive the port from environment variable
 const port = process.env.PORT || 8080;
+
+// Start the App on given port
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
 });
