@@ -5,11 +5,12 @@ const config = require('config');
 require("dotenv").config();
 const axios = require("axios");
 const { Configuration, OpenAIApi } = require("openai");
-const { LogAnalytics, Logger} = require("./mongodb");
+const { FileLogAnalytics, dbLogAnalytics, Logger} = require("./mongodb");
 
 
 
 let loggerClient = new Logger().getLogger();
+
 // Retreive all Config data
 const openai_api_Key = config.get('OPENAI.api_key');
 const openai_model = config.get('OPENAI.model');
@@ -124,7 +125,14 @@ app.post("/chat1", async (req, res) => {
 */
 app.get("/logs", async (req, res) => {
 
-  let info = await LogAnalytics();
+  let info = await dbLogAnalytics();
+  res.status(200).send(info);
+
+})
+
+app.get("/logs2", (req, res) => {
+
+  let info =  FileLogAnalytics();
   res.status(200).send(info);
 
 })
