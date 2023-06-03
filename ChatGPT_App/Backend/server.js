@@ -5,7 +5,7 @@ const config = require('config');
 require("dotenv").config();
 const axios = require("axios");
 const { Configuration, OpenAIApi } = require("openai");
-const { FileLogAnalytics, dbLogAnalytics, Logger} = require("./mongodb");
+const { FileLogAnalytics, dbLogAnalytics, PostgresLogAnalytics, Logger} = require("./mongodb");
 
 
 
@@ -123,6 +123,8 @@ app.post("/chat1", async (req, res) => {
 /* /logs
   Gets all logs to /chat & /chat1 api
 */
+
+// logs from mongodb db
 app.get("/logs", async (req, res) => {
 
   let info = await dbLogAnalytics();
@@ -130,9 +132,18 @@ app.get("/logs", async (req, res) => {
 
 })
 
+// logs from file system
 app.get("/logs2", (req, res) => {
 
   let info =  FileLogAnalytics();
+  res.status(200).send(info);
+
+})
+
+// logs from postgres db
+app.get("/logs3", async (req, res) => {
+
+  let info = await PostgresLogAnalytics();
   res.status(200).send(info);
 
 })

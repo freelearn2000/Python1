@@ -1,7 +1,7 @@
 
 {
     "OPENAI" : {
-        "api_key" : "sk-SkdvOik189XwmNnUIiV5T3BlbkFJ1T",
+        "api_key" : "sk-SkdvOik189XwmNnUIiV5T3vOik189XwmNnUIiV5T3",
         "model" : "text-davinci-003",
         "max_tokens" : 1024,
         "temperature" : 0.2 
@@ -10,5 +10,5 @@
         "name" : "Project1",
         "collection" : "ChatGPT"
     },
-    "Logger_Type" : "Database"
+    "Logger_Type" : "Postgres"
 }

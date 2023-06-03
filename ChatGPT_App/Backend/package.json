@@ -1,4 +1,14 @@
 {
+  "name": "chatgpt-app",
+  "version": "1.0.0",
+  "description": "for training purpose",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
@@ -7,6 +17,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongodb": "^5.5.0",
-    "openai": "^3.2.1"
+    "nodemon": "^2.0.22",
+    "openai": "^3.2.1",
+    "pg": "^8.11.0"
   }
 }
