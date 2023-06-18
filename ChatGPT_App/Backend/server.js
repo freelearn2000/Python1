@@ -5,7 +5,7 @@ const config = require('config');
 require("dotenv").config();
 const axios = require("axios");
 const { Configuration, OpenAIApi } = require("openai");
-const { FileLogAnalytics, dbLogAnalytics, PostgresLogAnalytics, Logger} = require("./mongodb");
+const { FileLogAnalytics, dbLogAnalytics, PostgresLogAnalytics, Logger} = require("./ServiceLayer");
 
 
 

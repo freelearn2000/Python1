@@ -7,12 +7,14 @@ const { Client } = require('pg');
 
 // Create a new PostgreSQL client instance
 const client = new Client({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'xxxxxx',
-  password: 'yyyyyy',
-  port: 5432, // Default PostgreSQL port
+  
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT, // Default PostgreSQL port
 });
+
 
 const name = config.get('PERSISTENCE.name');
 const table = config.get('PERSISTENCE.collection');
@@ -112,10 +114,8 @@ class PostgresLog extends Log {
       console.log("error\t" + e);
     }
     finally {
-
       // Close the connection
       await client.end();
-      
     }
   }
 
@@ -151,7 +151,7 @@ async function dbLogAnalytics() {
 async function PostgresLogAnalytics() {
 
   try {
-
+    
     await client.connect();
 
     let result = await client.query('SELECT * FROM messages');
@@ -164,7 +164,6 @@ async function PostgresLogAnalytics() {
     console.log(e);
   }
   finally {
-
     await client.end();
   }
 
